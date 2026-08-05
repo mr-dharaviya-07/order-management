@@ -1,0 +1,32 @@
+{
+  "name": "order-management-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Production-style food delivery order management assessment built with React, NestJS, Prisma and MySQL.",
+  "workspaces": [
+    "Frontend",
+    "Backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "migration:run": "npm run migration:run -w Backend",
+    "migration:generate": "npm run migration:generate -w Backend",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@eslint/js": "^9.18.0",
+    "eslint": "^9.18.0",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
+    "typescript-eslint": "^8.20.0",
+    "typescript": "^5.7.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,json,css,md}": "prettier --write"
+  }
+}
