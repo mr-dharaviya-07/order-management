@@ -68,3 +68,43 @@ button, input, textarea, select {
   @apply flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/60 px-5 py-3 font-semibold text-slate-800 hover:bg-slate-50 hover:text-slate-900 active:scale-[0.98] dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:bg-slate-800;
 }
 
+/* Global Loading Indicator Animations */
+@keyframes loading-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-loading-bar {
+  animation: loading-bar 2s infinite ease-in-out;
+}
+
+/* Counter-rotating custom spinner */
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+.animate-spin-reverse {
+  animation: spin-reverse 1.2s infinite linear;
+}
+
+/* Glassmorphic Loader Container Glow */
+.loader-glow {
+  box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.2), 0 1px 1px 0 rgba(255, 255, 255, 0.15) inset;
+}
+.dark .loader-glow {
+  box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.4), 0 1px 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+
+

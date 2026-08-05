@@ -6,6 +6,7 @@ import { useThemeStore } from '../store/theme.store';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/auth.store';
 import { motion, AnimatePresence } from 'framer-motion';
+import { GlobalLoader } from '../components/GlobalLoader';
 
 export function AppLayout() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -22,6 +23,7 @@ export function AppLayout() {
 
   return (
     <div className="min-h-screen pb-12">
+      <GlobalLoader />
       <header className="glass-header sticky top-0 z-30 shadow-sm transition-all duration-300">
         <div className="shell flex h-16 items-center justify-between gap-4">
           <NavLink to="/" className="flex items-center gap-3 font-semibold group">
