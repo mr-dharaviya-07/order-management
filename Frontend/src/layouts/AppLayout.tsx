@@ -25,7 +25,7 @@ export function AppLayout() {
       <header className="glass-header sticky top-0 z-30 shadow-sm transition-all duration-300">
         <div className="shell flex h-16 items-center justify-between gap-4">
           <NavLink to="/" className="flex items-center gap-3 font-semibold group">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
+            <span className="grid h-9 w-9 place-items-center rounded-xl shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
               <img src="/CraveGo.png" alt="CraveGo" className="w-8 h-8" />
             </span>
             <span className="hidden sm:block text-lg font-bold tracking-tight text-slate-800 dark:text-white">
