@@ -48,8 +48,13 @@ export function MenuForm({ item, onDone }: { item?: MenuItem; onDone?: () => voi
   }, [item, reset]);
   
   const mutation = useMutation({
-    mutationFn: (input: Input) =>
-      item ? menuApi.update(item.id, input as Partial<MenuItem>) : menuApi.create(input as Partial<MenuItem>),
+    mutationFn: (input: Input) => {
+      const payload: Partial<MenuItem> = {
+        ...input,
+        price: String(input.price),
+      };
+      return item ? menuApi.update(item.id, payload) : menuApi.create(payload);
+    },
     onSuccess: () => {
       toast.success(item ? 'Menu item successfully updated!' : 'Menu item successfully created!');
       queryClient.invalidateQueries({ queryKey: ['menu'] });
