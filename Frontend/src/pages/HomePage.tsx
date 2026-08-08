@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Search, Sparkles, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Skeleton } from '../components/Skeleton';
 import { FoodCard } from '../features/menu/FoodCard';
@@ -23,11 +23,12 @@ export function HomePage() {
     queryFn: () => menuApi.list({ search, category, sort }),
   });
 
-  const categories = useMemo(() => {
-    return Array.from(
-      new Map((data ?? []).map((item) => [item.category?.slug, item.category])).values()
-    ).filter(Boolean);
-  }, [data]);
+  const { data: allCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: menuApi.categories,
+  });
+
+  const categories = allCategories ?? [];
 
   const addItem = (item: MenuItem) => {
     add(item);

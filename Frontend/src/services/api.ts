@@ -1,4 +1,4 @@
-import type { AuthSession, DashboardStats, MenuItem, Order, OrderStatus } from '../types';
+import type { AuthSession, Category, DashboardStats, MenuItem, Order, OrderStatus } from '../types';
 import { useAuthStore } from '../store/auth.store';
 import toast from 'react-hot-toast';
 
@@ -69,6 +69,9 @@ async function fetchJson<T>(path: string, options: RequestInit & { params?: Quer
 
 export const menuApi = {
   list: (params?: QueryParams) => fetchJson<MenuItem[]>('/menu', { params }),
+  categories: () => fetchJson<Category[]>('/menu/categories'),
+  createCategory: (payload: { name: string; description?: string }) =>
+    fetchJson<Category>('/menu/categories', { method: 'POST', body: JSON.stringify(payload) }),
   create: (payload: Partial<MenuItem>) =>
     fetchJson<MenuItem>('/menu', { method: 'POST', body: JSON.stringify(payload) }),
   update: (id: string, payload: Partial<MenuItem>) =>

@@ -24,6 +24,10 @@ button, input, textarea, select {
   @apply transition-all duration-200 focus:outline-none;
 }
 
+select option {
+  @apply bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100;
+}
+
 .shell {
   @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
 }

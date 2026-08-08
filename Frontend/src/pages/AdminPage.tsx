@@ -14,6 +14,35 @@ import { money, statusLabel } from '../utils/format';
 
 const statuses: OrderStatus[] = ['ORDER_RECEIVED', 'PREPARING', 'COOKING', 'READY', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'];
 
+const RevenueTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-xl border border-slate-200 bg-white/95 p-3 shadow-md backdrop-blur-sm dark:border-slate-800/90 dark:bg-slate-950/95">
+        <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500">{label}</p>
+        <p className="text-sm font-bold text-slate-800 dark:text-white mt-0.5">
+          {money(Number(payload[0].value))}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
+const StatusTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="rounded-xl border border-slate-200 bg-white/95 p-3 shadow-md backdrop-blur-sm dark:border-slate-800/90 dark:bg-slate-950/95">
+        <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500">{statusLabel(data.status)}</p>
+        <p className="text-sm font-bold text-slate-850 dark:text-white mt-0.5">
+          Orders: <span className="font-extrabold text-brand-600 dark:text-brand-400">{data.count}</span>
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export function AdminPage() {
   const [editing, setEditing] = useState<MenuItem | undefined>();
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -88,7 +117,7 @@ export function AdminPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="date" tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
                 <YAxis tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
+                <Tooltip content={<RevenueTooltip />} />
                 <Bar dataKey="total" fill="url(#brandGradient)" radius={[6, 6, 0, 0]}>
                   {/* Gradient for bar fill */}
                   <defs>
@@ -114,7 +143,7 @@ export function AdminPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="status" tickLine={false} tickFormatter={(v) => String(v).slice(0, 8)} tick={{ fill: '#94a3b8', fontSize: 11 }} />
                 <YAxis allowDecimals={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                <Tooltip formatter={(v, n, p) => [v, statusLabel(String(p.payload.status))]} contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
+                <Tooltip content={<StatusTooltip />} />
                 <Bar dataKey="count" fill="url(#roseGradient)" radius={[6, 6, 0, 0]}>
                   <defs>
                     <linearGradient id="roseGradient" x1="0" y1="0" x2="0" y2="1">

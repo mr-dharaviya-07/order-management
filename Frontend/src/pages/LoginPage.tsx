@@ -210,7 +210,7 @@ export function LoginPage() {
                         <input
                           {...register('name')}
                           placeholder="John Doe"
-                          className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-10 pr-4 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:text-white"
+                          className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-10 pr-4 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-black dark:text-white"
                         />
                       </div>
                       {errors.name && (
@@ -228,7 +228,7 @@ export function LoginPage() {
                   <input
                     {...register('email')}
                     placeholder="email@example.com"
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-10 pr-4 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:text-white"
+                    className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-10 pr-4 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-black dark:text-white"
                   />
                 </div>
                 {errors.email && (
@@ -244,7 +244,7 @@ export function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     {...register('password')}
                     placeholder="••••••••"
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-10 pr-10 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:text-white"
+                    className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-10 pr-10 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-black dark:text-white"
                   />
                   <button
                     type="button"
@@ -274,7 +274,7 @@ export function LoginPage() {
                         <UserCheck size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                         <select
                           {...register('role')}
-                          className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-10 pr-4 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:text-white dark:bg-slate-900 cursor-pointer"
+                          className="h-11 w-full rounded-xl border border-slate-200 bg-white text-slate-800 dark:bg-slate-900 pl-10 pr-4 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:text-white cursor-pointer"
                         >
                           <option value="CUSTOMER">Customer</option>
                           <option value="ADMIN">Administrator</option>

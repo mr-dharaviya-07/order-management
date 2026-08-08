@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import { sanitizeText } from '../common/utils/sanitize';
-import { CreateMenuItemDto, MenuQueryDto, UpdateMenuItemDto } from './dto/menu.dto';
+import { CreateMenuItemDto, MenuQueryDto, UpdateMenuItemDto, CreateCategoryDto } from './dto/menu.dto';
 import { MenuItem } from '../../database/entities/menu-item.entity';
 import { Category } from '../../database/entities/category.entity';
 
@@ -84,6 +84,32 @@ export class MenuService {
     const item = await this.findOne(id);
     await this.menuRepository.update(item.id, { deletedAt: new Date(), isAvailable: false });
     return { ok: true };
+  }
+
+  async findCategories() {
+    return this.categoryRepository.find({
+      order: {
+        name: 'ASC',
+      },
+    });
+  }
+
+  async createCategory(dto: CreateCategoryDto) {
+    const slug = slugify(dto.name);
+    const existing = await this.categoryRepository.findOne({
+      where: [{ name: dto.name }, { slug }],
+    });
+    if (existing) {
+      throw new BadRequestException('Category with this name already exists');
+    }
+
+    const category = this.categoryRepository.create({
+      id: `cat-${slug}`,
+      name: dto.name,
+      slug,
+      description: dto.description || '',
+    });
+    return this.categoryRepository.save(category);
   }
 
   private async ensureCategory(id: string) {

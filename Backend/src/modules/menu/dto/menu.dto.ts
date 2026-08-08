@@ -24,3 +24,12 @@ export class UpdateMenuItemDto {
   @IsOptional() @IsUrl({ require_tld: false }) imageUrl?: string;
   @IsOptional() @IsBoolean() isAvailable?: boolean;
 }
+
+export class CreateCategoryDto {
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+}

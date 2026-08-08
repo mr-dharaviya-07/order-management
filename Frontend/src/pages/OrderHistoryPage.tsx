@@ -42,10 +42,6 @@ export function OrderHistoryPage() {
     <section className="shell py-10">
       <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400 mb-3">
-            <MapPin size={13} className="animate-bounce" />
-            Live Tracking Enabled
-          </span>
           <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white sm:text-4xl">Order History</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Check current kitchen progress and tracking logs in real-time.</p>
         </div>
