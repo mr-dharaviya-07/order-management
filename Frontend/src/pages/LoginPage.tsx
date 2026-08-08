@@ -164,7 +164,7 @@ export function LoginPage() {
     onSuccess: (_, variables) => {
       setResetEmail(variables.email);
       setForgotStep('otp');
-      toast.success('If the email exists, an OTP has been sent.');
+      toast.success('OTP sent successfully');
     },
     onError: (err: any) => {
       toast.error(err?.message || 'Failed to send OTP.');
