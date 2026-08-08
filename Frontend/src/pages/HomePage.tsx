@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Search, Sparkles, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { Search, Sparkles, SlidersHorizontal, ArrowUpDown, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { CustomSelect } from '../components/CustomSelect';
 import { Skeleton } from '../components/Skeleton';
 import { FoodCard } from '../features/menu/FoodCard';
 import { FoodDetailsModal } from '../features/menu/FoodDetailsModal';
@@ -12,6 +13,7 @@ import type { MenuItem } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function HomePage() {
+  const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [sort, setSort] = useState('name');
@@ -70,48 +72,49 @@ export function HomePage() {
         <div>
           {/* Filters Bar */}
           <div className="panel mb-8 grid gap-4 rounded-2xl p-4 sm:grid-cols-[1fr_auto_auto] items-center border border-slate-200/60 dark:border-slate-800/80 bg-white/50 backdrop-blur-md">
-            <label className="relative flex-1">
+            <form 
+              onSubmit={(e) => { e.preventDefault(); setSearch(searchInput); }} 
+              className="relative flex-1"
+            >
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input
                 aria-label="Search menu"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSearchInput(val);
+                  if (val === '') setSearch('');
+                }}
                 placeholder="Search dishes..."
                 className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-11 pr-4 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:text-white"
               />
-            </label>
+            </form>
 
             <div className="flex gap-2">
-              <div className="relative flex items-center">
-                <SlidersHorizontal size={14} className="absolute left-3 text-slate-400 pointer-events-none" />
-                <select
-                  aria-label="Filter category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="h-11 rounded-xl border border-slate-200 bg-white dark:bg-slate-900 pl-9 pr-8 text-sm dark:border-slate-800 dark:text-white appearance-none cursor-pointer"
-                >
-                  <option value="">All categories</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.slug}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <CustomSelect
+                aria-label="Filter category"
+                value={category}
+                onChange={setCategory}
+                icon={<SlidersHorizontal size={14} />}
+                options={[
+                  { value: '', label: 'All categories' },
+                  ...categories.map((cat) => ({ value: cat.slug, label: cat.name }))
+                ]}
+                className="w-44"
+              />
 
-              <div className="relative flex items-center">
-                <ArrowUpDown size={14} className="absolute left-3 text-slate-400 pointer-events-none" />
-                <select
-                  aria-label="Sort menu"
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value)}
-                  className="h-11 rounded-xl border border-slate-200 bg-white dark:bg-slate-900 pl-9 pr-8 text-sm dark:border-slate-800 dark:text-white appearance-none cursor-pointer"
-                >
-                  <option value="name">Name</option>
-                  <option value="priceAsc">Price: Low to High</option>
-                  <option value="priceDesc">Price: High to Low</option>
-                </select>
-              </div>
+              <CustomSelect
+                aria-label="Sort menu"
+                value={sort}
+                onChange={setSort}
+                icon={<ArrowUpDown size={14} />}
+                options={[
+                  { value: 'name', label: 'Name' },
+                  { value: 'priceAsc', label: 'Price: Low to High' },
+                  { value: 'priceDesc', label: 'Price: High to Low' }
+                ]}
+                className="w-48"
+              />
             </div>
           </div>
 

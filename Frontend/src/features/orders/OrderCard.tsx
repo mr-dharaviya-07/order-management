@@ -23,7 +23,7 @@ export function OrderCard({ order }: { order: Order }) {
             <h3 className="text-base font-extrabold text-slate-800 dark:text-white">Order #{order.orderNumber}</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5">
               <Calendar size={12} />
-              {new Date(order.createdAt).toLocaleString()}
+              {new Date(order.createdAt).toLocaleString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true, })}
             </p>
           </div>
         </div>

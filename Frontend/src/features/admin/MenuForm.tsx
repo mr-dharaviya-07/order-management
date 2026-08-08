@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
-import { X } from 'lucide-react';
+import { X, ChevronDown } from 'lucide-react';
+import { CustomSelect } from '../../components/CustomSelect';
 import { menuApi } from '../../services/api';
 import type { MenuItem } from '../../types';
 
@@ -20,7 +21,7 @@ const schema = z.object({
 type Input = z.infer<typeof schema>;
 
 const friendlyNames: Record<string, string> = {
-  categoryId: 'Category ID',
+  categoryId: 'Select Category',
   name: 'Item Name',
   price: 'Price (₹)',
   imageUrl: 'Image URL',
@@ -37,7 +38,7 @@ export function MenuForm({ item, onDone }: { item?: MenuItem; onDone?: () => voi
     queryFn: menuApi.categories,
   });
 
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<Input>({
+  const { register, handleSubmit, reset, setValue, control, formState: { errors } } = useForm<Input>({
     resolver: zodResolver(schema),
     defaultValues: item ? { ...item, price: Number(item.price) } : { categoryId: 'cat-pizza', isAvailable: true },
   });
@@ -113,17 +114,23 @@ export function MenuForm({ item, onDone }: { item?: MenuItem; onDone?: () => voi
               )}
             </div>
             {name === 'categoryId' ? (
-              <select
-                {...register(name)}
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-3 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:text-white cursor-pointer"
-              >
-                <option value="" disabled>Select Category</option>
-                {categories?.map((cat) => (
-                  <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
-                    {cat.name} ({cat.id})
-                  </option>
-                ))}
-              </select>
+              <div className="mt-1.5">
+                <Controller
+                  name={name}
+                  control={control}
+                  render={({ field }) => (
+                    <CustomSelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Select Category"
+                      options={categories?.map((cat) => ({
+                        value: cat.id,
+                        label: `${cat.name} (${cat.id})`
+                      })) || []}
+                    />
+                  )}
+                />
+              </div>
             ) : (
               <input
                 {...register(name)}

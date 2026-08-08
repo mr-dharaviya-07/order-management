@@ -94,6 +94,12 @@ export const authApi = {
     fetchJson<AuthSession>('/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
   register: (payload: { name: string; email: string; password: string; role?: string }) =>
     fetchJson<AuthSession>('/auth/register', { method: 'POST', body: JSON.stringify(payload) }),
+  forgotPassword: (payload: { email: string }) =>
+    fetchJson<{ ok: boolean; message: string }>('/auth/forgot-password', { method: 'POST', body: JSON.stringify(payload) }),
+  verifyOtp: (payload: { email: string; otp: string }) =>
+    fetchJson<{ ok: boolean; message: string }>('/auth/verify-otp', { method: 'POST', body: JSON.stringify(payload) }),
+  resetPassword: (payload: { email: string; otp: string; password: string }) =>
+    fetchJson<{ ok: boolean; message: string }>('/auth/reset-password', { method: 'POST', body: JSON.stringify(payload) }),
 };
 
 export const dashboardApi = {

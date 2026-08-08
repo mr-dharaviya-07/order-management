@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BarChart3, CheckCircle, Clock, DollarSign, PackageSearch, Search, ShoppingCart, Trash2, XCircle, Pencil, IndianRupee } from 'lucide-react';
+import { BarChart3, CheckCircle, Clock, DollarSign, PackageSearch, Search, ShoppingCart, Trash2, XCircle, Pencil, IndianRupee, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { CustomSelect } from '../components/CustomSelect';
 import { Skeleton } from '../components/Skeleton';
 import { StatusBadge } from '../components/StatusBadge';
 import { AnalyticsCard } from '../features/admin/AnalyticsCard';
@@ -46,8 +47,10 @@ const StatusTooltip = ({ active, payload }: any) => {
 export function AdminPage() {
   const [editing, setEditing] = useState<MenuItem | undefined>();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [orderSearchInput, setOrderSearchInput] = useState('');
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatus, setOrderStatus] = useState('');
+  const [menuSearchInput, setMenuSearchInput] = useState('');
   const [menuSearch, setMenuSearch] = useState('');
   const queryClient = useQueryClient();
   const stats = useQuery({ queryKey: ['dashboard'], queryFn: dashboardApi.stats });
@@ -170,16 +173,23 @@ export function AdminPage() {
         <div className="panel overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-800/80 bg-white/40 backdrop-blur-md">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-850 p-6">
             <div className="font-bold text-slate-800 dark:text-white">Manage Menu Catalog</div>
-            <label className="relative w-full sm:w-72">
+            <form 
+              onSubmit={(e) => { e.preventDefault(); setMenuSearch(menuSearchInput); }} 
+              className="relative w-full sm:w-72"
+            >
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
               <input
                 aria-label="Search menu in admin"
-                value={menuSearch}
-                onChange={(e) => setMenuSearch(e.target.value)}
+                value={menuSearchInput}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setMenuSearchInput(val);
+                  if (val === '') setMenuSearch('');
+                }}
                 placeholder="Search menu catalog..."
                 className="h-10 w-full rounded-xl border border-slate-200 bg-transparent pl-9 pr-4 text-xs dark:border-slate-850 dark:text-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
               />
-            </label>
+            </form>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -248,29 +258,33 @@ export function AdminPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-850 p-6">
           <div className="font-bold text-slate-800 dark:text-white">Active Queue & Orders</div>
           <div className="grid w-full gap-2 sm:w-auto sm:grid-cols-[260px_220px]">
-            <label className="relative">
+            <form 
+              onSubmit={(e) => { e.preventDefault(); setOrderSearch(orderSearchInput); }} 
+              className="relative"
+            >
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
               <input
                 aria-label="Search orders in admin"
-                value={orderSearch}
-                onChange={(e) => setOrderSearch(e.target.value)}
+                value={orderSearchInput}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setOrderSearchInput(val);
+                  if (val === '') setOrderSearch('');
+                }}
                 placeholder="Search orders..."
                 className="h-10 w-full rounded-xl border border-slate-200 bg-transparent pl-9 pr-4 text-xs dark:border-slate-850 dark:text-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
               />
-            </label>
-            <select
+            </form>
+            <CustomSelect
               aria-label="Filter orders in admin"
               value={orderStatus}
-              onChange={(e) => setOrderStatus(e.target.value)}
-              className="h-10 rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3 text-xs dark:border-slate-800 dark:text-white appearance-none cursor-pointer"
-            >
-              <option value="">All statuses</option>
-              {statuses.map((s) => (
-                <option key={s} value={s}>
-                  {statusLabel(s)}
-                </option>
-              ))}
-            </select>
+              onChange={setOrderStatus}
+              options={[
+                { value: '', label: 'All statuses' },
+                ...statuses.map((s) => ({ value: s, label: statusLabel(s) }))
+              ]}
+              className="w-full"
+            />
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -301,18 +315,13 @@ export function AdminPage() {
                     <StatusBadge status={order.status} />
                   </td>
                   <td className="p-4">
-                    <select
+                    <CustomSelect
                       value={order.status}
                       disabled={order.status === 'DELIVERED' || order.status === 'CANCELLED'}
-                      onChange={(e) => updateStatus.mutate({ id: order.id, status: e.target.value as OrderStatus })}
-                      className="rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs dark:border-slate-800 dark:text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {statuses.map((s) => (
-                        <option key={s} value={s}>
-                          {statusLabel(s)}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={(val) => updateStatus.mutate({ id: order.id, status: val as OrderStatus })}
+                      options={statuses.map((s) => ({ value: s, label: statusLabel(s) }))}
+                      className="w-40"
+                    />
                   </td>
                   <td className="p-4 text-right">
                     <button

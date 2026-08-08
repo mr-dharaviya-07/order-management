@@ -29,6 +29,12 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   refreshTokenHash: string | null;
 
+  @Column({ type: 'varchar', nullable: true })
+  resetPasswordOtp: string | null;
+
+  @Column({ type: 'datetime', nullable: true })
+  resetPasswordOtpExpiry: Date | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

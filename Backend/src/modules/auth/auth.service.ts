@@ -3,8 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { LoginDto, RegisterDto } from './dto/auth.dto';
+import { LoginDto, RegisterDto, ForgotPasswordDto, VerifyOtpDto, ResetPasswordDto } from './dto/auth.dto';
 import { User, UserRole } from '../../database/entities/user.entity';
+import { EmailService } from '../common/email.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwt: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -50,6 +52,54 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
     return this.issueTokens(user);
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const user = await this.userRepository.findOne({ where: { email: dto.email.toLowerCase() } });
+    if (!user) {
+      throw new UnauthorizedException('Email is not registered');
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digit OTP
+    const expiry = new Date();
+    expiry.setMinutes(expiry.getMinutes() + 10);
+
+    user.resetPasswordOtp = otp;
+    user.resetPasswordOtpExpiry = expiry;
+    await this.userRepository.save(user);
+
+    await this.emailService.sendPasswordResetOtp(user.email, otp);
+
+    return { ok: true, message: 'OTP sent successfully' };
+  }
+
+  async verifyOtp(dto: VerifyOtpDto) {
+    const user = await this.userRepository.findOne({ where: { email: dto.email.toLowerCase() } });
+    if (!user || !user.resetPasswordOtp || user.resetPasswordOtp !== dto.otp) {
+      throw new UnauthorizedException('Invalid OTP');
+    }
+    if (!user.resetPasswordOtpExpiry || user.resetPasswordOtpExpiry < new Date()) {
+      throw new UnauthorizedException('OTP has expired');
+    }
+
+    return { ok: true, message: 'OTP verified' };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const user = await this.userRepository.findOne({ where: { email: dto.email.toLowerCase() } });
+    if (!user || !user.resetPasswordOtp || user.resetPasswordOtp !== dto.otp) {
+      throw new UnauthorizedException('Invalid OTP');
+    }
+    if (!user.resetPasswordOtpExpiry || user.resetPasswordOtpExpiry < new Date()) {
+      throw new UnauthorizedException('OTP has expired');
+    }
+
+    user.passwordHash = await bcrypt.hash(dto.password, 12);
+    user.resetPasswordOtp = null;
+    user.resetPasswordOtpExpiry = null;
+    await this.userRepository.save(user);
+
+    return { ok: true, message: 'Password reset successfully' };
   }
 
   private async issueTokens(user: User) {

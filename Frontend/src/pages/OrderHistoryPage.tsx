@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Search, MapPin, ClipboardList, Filter } from 'lucide-react';
+import { Search, MapPin, ClipboardList, Filter, ChevronDown } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { CustomSelect } from '../components/CustomSelect';
 import { Skeleton } from '../components/Skeleton';
 import { OrderCard } from '../features/orders/OrderCard';
 import { useRealtimeOrder } from '../hooks/useRealtimeOrder';
@@ -9,6 +10,7 @@ import type { OrderStatus } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function OrderHistoryPage() {
+  const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const queryClient = useQueryClient();
@@ -49,33 +51,34 @@ export function OrderHistoryPage() {
 
       {/* Filter and Search */}
       <div className="panel mb-8 grid gap-4 rounded-2xl p-4 sm:grid-cols-[1fr_240px] items-center border border-slate-200/60 dark:border-slate-800/80 bg-white/50 backdrop-blur-md">
-        <label className="relative flex-1">
+        <form 
+          onSubmit={(e) => { e.preventDefault(); setSearch(searchInput); }} 
+          className="relative flex-1"
+        >
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
             aria-label="Search orders"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSearchInput(val);
+              if (val === '') setSearch('');
+            }}
             placeholder="Search customer name, phone or Order ID..."
             className="h-11 w-full rounded-xl border border-slate-200 bg-transparent pl-11 pr-4 text-sm dark:border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:text-white"
           />
-        </label>
+        </form>
         
-        <div className="relative flex items-center">
-          <Filter size={14} className="absolute left-3 text-slate-400 pointer-events-none" />
-          <select
-            aria-label="Filter order status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="h-11 w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 pl-9 pr-8 text-sm dark:border-slate-800 dark:text-white appearance-none cursor-pointer"
-          >
-            <option value="">All Statuses</option>
-            {statuses.map((s) => (
-              <option key={s} value={s}>
-                {s.replace(/_/g, ' ')}
-              </option>
-            ))}
-          </select>
-        </div>
+        <CustomSelect
+          aria-label="Filter order status"
+          value={status}
+          onChange={setStatus}
+          icon={<Filter size={14} />}
+          options={[
+            { value: '', label: 'All Statuses' },
+            ...statuses.map((s) => ({ value: s, label: s.replace(/_/g, ' ') }))
+          ]}
+        />
       </div>
 
       {isLoading ? (
